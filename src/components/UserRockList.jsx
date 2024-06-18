@@ -1,8 +1,9 @@
 import { useEffect } from "react"
 
-export const RockList = ({ rocks, fetchRocks }) => {
+export const UserRockList = ({ rocks, fetchUserRocks, deleteRock }) => {
+    
     useEffect(() => {
-        fetchRocks()
+        fetchUserRocks()
     }, [])
 
 
@@ -12,6 +13,7 @@ export const RockList = ({ rocks, fetchRocks }) => {
             return rocks.map(rock => <div key={`key-${rock.id}`} className="border p-5 border-solid hover:bg-fuchsia-500 hover:text-violet-50 rounded-md border-violet-900 mt-5 bg-slate-50">
                 <div>{rock.name} ({rock.type.label})</div>
                 <div> In the collection of {rock.user?.first_name ?? 'Unknown'} {rock.user?.last_name ?? 'Unknown'}</div>
+                <button onClick={() => deleteRock(rock.id)}>Delete</button>
             </div>)
         }
 

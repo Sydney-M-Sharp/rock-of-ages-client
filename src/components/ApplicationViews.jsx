@@ -6,6 +6,7 @@ import Home from "../pages/Home"
 import { RockForm } from "./RockForm.jsx"
 import { RockList } from "./RockList.jsx"
 import { Register } from '../pages/Register.jsx'
+import { UserRockList } from './UserRockList.jsx'
 
 
 export const ApplicationViews = () => {
@@ -28,6 +29,28 @@ export const ApplicationViews = () => {
         const rocks = await response.json()
         setRocksState(rocks)
     }
+    const fetchUserRocksFromAPI = async () => {
+        const response = await fetch("http://localhost:8000/rocks?owner=current",
+            {
+                headers: {
+                    Authorization: `Token ${JSON.parse(localStorage.getItem("rock_token")).token}`
+                }
+            })
+        const rocks = await response.json()
+        setRocksState(rocks)
+    }
+    const deleteUserRockFromAPI = async (rockId) => {
+        const response = await fetch(`http://localhost:8000/rocks/${rockId}`,
+            {
+                headers: {
+                    Authorization: `Token ${JSON.parse(localStorage.getItem("rock_token")).token}`
+                },
+                method: "DELETE"
+            })
+        
+            const rocks = await fetchUserRocksFromAPI()
+            setRocksState(rocks)
+    }
 
     return <BrowserRouter>
         <Routes>
@@ -35,9 +58,9 @@ export const ApplicationViews = () => {
             <Route path="/register" element={<Register />} />
             <Route element={<Authorized />}>
                 <Route path="/" element={<Home />} />
-                <Route path="/allrocks" element={<RockList rocks={rocksState} fetchRocks={fetchRocksFromAPI} />} />
+                <Route path="/allrocks" element={<RockList rocks={rocksState} fetchRocks={fetchRocksFromAPI} deleteRock={deleteUserRockFromAPI} />} />
                 <Route path="/create" element={<RockForm fetchRocks={fetchRocksFromAPI} />} />
-                <Route path="/mine" element={<RockList rocks={rocksState} fetchRocks={fetchRocksFromAPI} />} />
+                <Route path="/mine" element={<UserRockList rocks={rocksState} fetchUserRocks={fetchUserRocksFromAPI} deleteRock={deleteUserRockFromAPI}/>} />
             </Route>
         </Routes>
     </BrowserRouter>
